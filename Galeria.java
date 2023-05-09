@@ -52,6 +52,13 @@ public class Galeria {
             System.out.println("Lo sentimos hemos tenido un error en el programa *10");
         }
     }
+    public void removeALLPelicula() {
+        try {
+            cartelera.removeAll(cartelera);
+        } catch (Exception e) {
+            System.out.println("Lo sentimos hemos tenido un error en el programa *101");
+        }
+    }
 
     /**
      * longitudLista es un método que devuelve el tamaño de la lista.
@@ -78,14 +85,27 @@ public class Galeria {
     public void mostrarArrayList() {
         try {
             for (Pelicula item : cartelera) {
-                System.out.println("Título: " + item.getNombre() + "; Director: " + item.getDirector() + "; Género: " + item.getGénero());
+                System.out.println("Lista Título: " + item.getNombre() + "; Director: " + item.getDirector() + "; Género: " + item.getGénero());
             }
         } catch (Exception e) {
             System.out.println("Lo sentimos hemos tenido un error en el programa *30");
         }
 
     }
+    public void ordenarLista(){
+        int i = 1;
+        for (Pelicula item : cartelera) {
+            item.setIdPelicula(i);
+            i++;
+        }
+
+    }
 
 }
+
+
+
+
+
 
 
