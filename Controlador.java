@@ -16,7 +16,7 @@ public class Controlador {
     public static void main(String[] args) {
         int eleccion;
         Galeria lista = new Galeria();
-        AccionesBD.volcarBDaLista(lista);
+        emparejarListayBD(lista);
         try {
             do {
                 eleccion = eleccionMenu(1, 6, Mensaje.mostrarMenu());
@@ -41,7 +41,9 @@ public class Controlador {
                         break;
                     case 5:
                         //Vista general
-                        lista.mostrarArrayList();
+                        mostrarListayBD(lista);
+                        break;
+                    default:
                         break;
                 }
             } while (eleccion != 6);
@@ -92,21 +94,18 @@ public class Controlador {
         String director;
         String genero;
         int posicion;
-        String sql ;
-
+        String sql;
 
         try {
 
-        titulo = Herramientas.pedirString("¿Cuál es el título?");
-        director = Herramientas.pedirString("¿Cuál es el director?");
-        genero = Herramientas.pedirString("¿Cuál es el género?");
+            titulo = Herramientas.pedirString("¿Cuál es el título?");
+            director = Herramientas.pedirString("¿Cuál es el director?");
+            genero = Herramientas.pedirString("¿Cuál es el género?");
 
-        AccionList.añadirPelLista(lista, titulo, director, genero);
-        posicion = AccionList.buscarNombre(lista, titulo);
-        sql = "insert into peliculas (idPelicula, Titulo, Director, Genero) values (" + posicion + ","+"'" + lista.getCartelera().get(posicion).getNombre() + "',"+ "'" + lista.getCartelera().get(posicion).getDirector() + "',"+ "'" + lista.getCartelera().get(posicion).getGénero() + "');";
-        AccionesBD.insertarBD(posicion, lista, sql);
-
-
+            AccionList.añadirPelLista(lista, titulo, director, genero);
+            posicion = AccionList.buscarNombre(lista, titulo);
+            sql = "insert into peliculas (idPelicula, Titulo, Director, Genero) values (" + posicion + "," + "'" + lista.getCartelera().get(posicion - 1).getNombre() + "'," + "'" + lista.getCartelera().get(posicion - 1).getDirector() + "'," + "'" + lista.getCartelera().get(posicion - 1).getGénero() + "');";
+            AccionesBD.insertarBD(posicion, lista, sql);
         } catch (Exception e) {
             System.out.println("Lo sentimos hemos tenido un error en el programa $20");
         }
@@ -129,7 +128,7 @@ public class Controlador {
 
         int posicion = 0;
         ArrayList<Integer> posiciones = new ArrayList<Integer>();
-        String sql ;
+        String sql;
 
         try {
             if (!Verificar.verificarListVacia(lista)) {
@@ -140,22 +139,24 @@ public class Controlador {
                     case 1:
                         titulo = Herramientas.pedirString("Dime el título que buscas");
                         posicion = AccionList.buscarNombre(lista, titulo);
-                        sql = "select * from peliculas where idPelicula = " + "'" + posicion + "'" ;
+                        sql = "select * from peliculas where idPelicula = " + "'" + posicion + "'";
                         AccionesBD.buscarBD(posicion, lista, sql);
                         break;
                     //Busca todas las coincidencias con el director.
                     case 2:
                         director = Herramientas.pedirString("Dime el director que buscas");
-                        posiciones = AccionList.buscarDirectores(lista,director);
-                        sql = "select * from peliculas where idPelicula = " + "'" + posicion + "'" ;
-                        AccionesBD.buscarBD(posiciones,lista,sql);
+                        posiciones = AccionList.buscarDirectores(lista, director);
+                        System.out.println(posiciones.toString());
+                        sql = "select * from peliculas where idPelicula = " + "'" + posicion + "'";
+                        AccionesBD.buscarBD(posiciones, lista, sql);
                         break;
 
                     case 3:
                         genero = Herramientas.pedirString("Dime el género que buscas");
-                        posiciones = AccionList.buscarGeneros(lista,genero);
-                        sql = "select * from peliculas where idPelicula = " + "'" + posicion + "'" ;
-                        AccionesBD.buscarBD(posiciones,lista,sql);
+                        posiciones = AccionList.buscarGeneros(lista, genero);
+                        System.out.println(posiciones.toString());
+                        sql = "select * from peliculas where idPelicula = " + "'" + posicion + "'";
+                        AccionesBD.buscarBD(posiciones, lista, sql);
                         break;
                 }
             } else {
@@ -166,14 +167,6 @@ public class Controlador {
         }
     }
 
-    /**
-     * modificarPosicion es un método estático que nos pide un número para la elección de su menú, el String para
-     * realizar la busqueda dentro de la lista y el/los nuevo/s String para modificar la información en esa posición.
-     * Previamente deben haber datos guardados para poder funcionar.
-     *
-     * @param lista Objeto de la clase Galeria que alberga un ArrayList<Pelicula>.
-     * @author Adriandela
-     */
     public static void modificarPosicion(Galeria lista) {
         //Debe de haber algún dato guardado para que realice la acción.
         int eleccion;
@@ -182,7 +175,7 @@ public class Controlador {
         String newTitulo;
         String newDirector;
         String newGenero;
-
+        String sql;
         try {
             if (!Verificar.verificarListVacia(lista)) {
                 eleccion = eleccionMenu(1, 4, Mensaje.mostrarMenuModificar());
@@ -195,7 +188,9 @@ public class Controlador {
                         posicion = AccionList.buscarNombre(lista, titulo);
                         if (posicion != -1) {
                             newTitulo = Herramientas.pedirString("Cuál es el nuevo valor para el título");
+                            sql = "update peliculas set titulo = " + "'" + newTitulo + "'" + " where idPelicula = " + +posicion + ";";
                             AccionList.modificarNombre(lista, posicion, newTitulo);
+                            AccionesBD.modificarBD(posicion, newTitulo, sql);
                         }
                         break;
                     //Modifica sólo el director.
@@ -204,7 +199,9 @@ public class Controlador {
                         posicion = AccionList.buscarNombre(lista, titulo);
                         if (posicion != -1) {
                             newDirector = Herramientas.pedirString("Cuál es el nuevo valor para el director");
+                            sql = "update peliculas set director = " + "'" + newDirector + "'" + " where idPelicula = " + +posicion + ";";
                             AccionList.modificarDirector(lista, posicion, newDirector);
+                            AccionesBD.modificarBD(posicion, newDirector, sql);
                         }
                         break;
                     //Modifica sólo el género.
@@ -213,7 +210,9 @@ public class Controlador {
                         posicion = AccionList.buscarNombre(lista, titulo);
                         if (posicion != -1) {
                             newGenero = Herramientas.pedirString("Cuál es el nuevo valor para el género");
+                            sql = "update peliculas set genero = " + "'" + newGenero + "'" + " where idPelicula = " + +posicion + ";";
                             AccionList.modificarGenero(lista, posicion, newGenero);
+                            AccionesBD.modificarBD(posicion, newGenero, sql);
                         }
                         break;
                     //Modifica el título, género y director.
@@ -229,6 +228,10 @@ public class Controlador {
 
                             newGenero = Herramientas.pedirString("Cuál es el nuevo valor para el género");
                             AccionList.modificarGenero(lista, posicion, newGenero);
+                            sql = "update peliculas set genero = " + "'" + newGenero + "'" + ", titulo = " + "'" + newTitulo + "'" + ", director = " + "'" + newDirector + "'" + " where idPelicula = " + posicion + ";";
+                            AccionesBD.modificarTodoBD(posicion, newTitulo, newDirector, newGenero, sql);
+
+
                         }
                         break;
                 }
@@ -251,12 +254,17 @@ public class Controlador {
         //Debe de haber algún dato guardado para que realice la acción.
         int posicion;
         String titulo;
+        String sql;
         try {
             if (!Verificar.verificarListVacia(lista)) {
                 titulo = Herramientas.pedirString("¿Que película quieres borrar?");
                 posicion = AccionList.buscarNombre(lista, titulo);
                 if (posicion != -1) {
                     AccionList.borrarPelicula(lista, posicion);
+                    sql = "delete from peliculas where idPelicula = " + posicion;
+                    AccionesBD.borrarBD(posicion, sql);
+                    emparejarListayBD(lista);
+
                 }
             } else {
                 Mensaje.advertenciaListVacia();
@@ -264,5 +272,31 @@ public class Controlador {
         } catch (Exception e) {
             System.out.println("Lo sentimos hemos tenido un error en el programa $50");
         }
+    }
+
+    public static void emparejarListayBD(Galeria lista) {
+        int longitudLista;
+        Galeria listaAux = new Galeria();
+        String sql;
+
+        AccionesBD.volcarBDaLista(listaAux);
+        longitudLista = listaAux.longitudLista();
+        listaAux.ordenarLista();
+        sql = "delete from peliculas";
+        AccionesBD.borrarBD(sql);
+        for (int i = 1; i <= longitudLista; i++) {
+            sql = "insert into peliculas (idPelicula, Titulo, Director, Genero) values (" + listaAux.getCartelera().get(i - 1).getIdPelicula() + "," + "'" + listaAux.getCartelera().get(i - 1).getNombre() + "'," + "'" + listaAux.getCartelera().get(i - 1).getDirector() + "'," + "'" + listaAux.getCartelera().get(i - 1).getGénero() + "');";
+            AccionesBD.updateBD(lista, sql, i);
+        }
+        lista.removeALLPelicula();
+        AccionesBD.volcarBDaLista(lista);
+        listaAux.removeALLPelicula();
+    }
+
+    public static void mostrarListayBD(Galeria lista) {
+        lista.mostrarArrayList();
+        System.out.println("");
+        AccionesBD.mostrarBD();
+        System.out.println("");
     }
 }

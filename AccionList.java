@@ -20,7 +20,7 @@ public class AccionList {
     public static void añadirPelLista(Galeria lista, String titulo, String director, String genero) {
         int longitud = lista.longitudLista();
         try {
-          lista.addPelicula(new Pelicula(longitud+1,titulo, director, genero));
+            lista.addPelicula(new Pelicula(longitud + 1, titulo, director, genero));
         } catch (Exception e) {
             System.out.println("Lo sentimos hemos tenido un error en el programa ~00");
         }
@@ -57,12 +57,12 @@ public class AccionList {
 
             if (!encontrado) {
                 System.out.println("Los sentimos, no hemos encontrado la palabra que buscabas");
-                posicion = -1;
+                posicion = -2;
             }
         } catch (Exception e) {
             System.out.println("Lo sentimos hemos tenido un error en el programa ~10");
         }
-        return posicion;
+        return (posicion + 1);
     }
 
     /**
@@ -80,9 +80,9 @@ public class AccionList {
         try {
             genero = Herramientas.convertirAMinus(genero);
 
-            for (int i = 0; i < longitudLista; i++) {
-                if (Herramientas.convertirAMinus(lista.getCartelera().get(i).getGénero()).equals(genero)) {
-                   volcadoLista.add(lista.getCartelera().get(i).getIdPelicula());
+            for (int i = 1; i <= longitudLista; i++) {
+                if (Herramientas.convertirAMinus(lista.getCartelera().get(i - 1).getGénero()).equals(genero)) {
+                    volcadoLista.add(lista.getCartelera().get(i - 1).getIdPelicula());
                     encontrado = true;
                 }
             }
@@ -111,9 +111,9 @@ public class AccionList {
         try {
             director = Herramientas.convertirAMinus(director);
 
-            for (int i = 0; i < longitudLista; i++) {
-                if (Herramientas.convertirAMinus(lista.getCartelera().get(i).getDirector()).equals(director)) {
-                    volcadoLista.add(lista.getCartelera().get(i).getIdPelicula());
+            for (int i = 1; i <= longitudLista; i++) {
+                if (Herramientas.convertirAMinus(lista.getCartelera().get(i - 1).getDirector()).equals(director)) {
+                    volcadoLista.add(lista.getCartelera().get(i - 1).getIdPelicula());
                     encontrado = true;
                 }
             }
@@ -137,8 +137,8 @@ public class AccionList {
      */
     public static void modificarNombre(Galeria lista, int posicion, String newTitulo) {
         try {
-            lista.getCartelera().get(posicion).setNombre(newTitulo);
-            System.out.println(lista.getCartelera().get(posicion));
+            lista.getCartelera().get(posicion - 1).setNombre(newTitulo);
+            System.out.println(lista.getCartelera().get(posicion - 1));
         } catch (Exception e) {
             System.out.println("Lo sentimos hemos tenido un error en el programa ~40");
         }
@@ -155,8 +155,8 @@ public class AccionList {
      */
     public static void modificarDirector(Galeria lista, int posicion, String newDirector) {
         try {
-            lista.getCartelera().get(posicion).setDirector(newDirector);
-            System.out.println(lista.getCartelera().get(posicion));
+            lista.getCartelera().get(posicion - 1).setDirector(newDirector);
+            System.out.println(lista.getCartelera().get(posicion - 1));
         } catch (Exception e) {
             System.out.println("Lo sentimos hemos tenido un error en el programa ~50");
         }
@@ -173,8 +173,8 @@ public class AccionList {
      */
     public static void modificarGenero(Galeria lista, int posicion, String newGenero) {
         try {
-            lista.getCartelera().get(posicion).setGénero(newGenero);
-            System.out.println(lista.getCartelera().get(posicion));
+            lista.getCartelera().get(posicion - 1).setGénero(newGenero);
+            System.out.println(lista.getCartelera().get(posicion - 1));
         } catch (Exception e) {
             System.out.println("Lo sentimos hemos tenido un error en el programa ~60");
         }
@@ -190,7 +190,7 @@ public class AccionList {
      */
     public static void borrarPelicula(Galeria lista, int posicion) {
         try {
-            lista.removePelicula(posicion);
+            lista.removePelicula(posicion -1);
         } catch (Exception e) {
             System.out.println("Lo sentimos hemos tenido un error en el programa ~70");
         }
