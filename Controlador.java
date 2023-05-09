@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * Clase en la que se realiza la gestión del programa, los métodos empleados se conforman de la utilización de los
  * métodos de otras clases para realizar las funciones del programa.
@@ -14,6 +16,7 @@ public class Controlador {
     public static void main(String[] args) {
         int eleccion;
         Galeria lista = new Galeria();
+        AccionesBD.volcarBDaLista(lista);
         try {
             do {
                 eleccion = eleccionMenu(1, 6, Mensaje.mostrarMenu());
@@ -21,7 +24,7 @@ public class Controlador {
                 switch (eleccion) {
                     case 1:
                         //Añade pelicula al ArrayList
-                        añadirPelicula(lista);
+                        añadirPeliculaListaYBD(lista);
                         break;
                     case 2:
                         //Busqueda
@@ -78,23 +81,32 @@ public class Controlador {
     }
 
     /**
-     * añadirPelicula es un método estático que nos pregunta tres valores de tipo String y los introduce dentro
+     * añadirPeliculaYBD es un método estático que nos pregunta tres valores de tipo String y los introduce dentro
      * de la lista como valores de un nuevo objeto de la clase Película.
      *
      * @param lista Objeto de la clase Galeria que alberga un ArrayList<Pelicula>.
      * @author Adriandela
      */
-    public static void añadirPelicula(Galeria lista) {
+    public static void añadirPeliculaListaYBD(Galeria lista) {
         String titulo;
         String director;
         String genero;
+        int posicion;
+        String sql ;
+
+
         try {
 
-            titulo = Herramientas.pedirString("¿Cuál es el título?");
-            director = Herramientas.pedirString("¿Cuál es el director?");
-            genero = Herramientas.pedirString("¿Cuál es el género?");
+        titulo = Herramientas.pedirString("¿Cuál es el título?");
+        director = Herramientas.pedirString("¿Cuál es el director?");
+        genero = Herramientas.pedirString("¿Cuál es el género?");
 
-            AccionList.añadirPelLista(lista, titulo, director, genero);
+        AccionList.añadirPelLista(lista, titulo, director, genero);
+        posicion = AccionList.buscarNombre(lista, titulo);
+        sql = "insert into peliculas (idPelicula, Titulo, Director, Genero) values (" + posicion + ","+"'" + lista.getCartelera().get(posicion).getNombre() + "',"+ "'" + lista.getCartelera().get(posicion).getDirector() + "',"+ "'" + lista.getCartelera().get(posicion).getGénero() + "');";
+        AccionesBD.insertarBD(posicion, lista, sql);
+
+
         } catch (Exception e) {
             System.out.println("Lo sentimos hemos tenido un error en el programa $20");
         }
@@ -114,6 +126,11 @@ public class Controlador {
         String titulo;
         String genero;
         String director;
+
+        int posicion = 0;
+        ArrayList<Integer> posiciones = new ArrayList<Integer>();
+        String sql ;
+
         try {
             if (!Verificar.verificarListVacia(lista)) {
                 eleccion = eleccionMenu(1, 3, Mensaje.mostrarMenuBusqueda());
@@ -122,17 +139,23 @@ public class Controlador {
                     //Busca la primera coincidencia de título.
                     case 1:
                         titulo = Herramientas.pedirString("Dime el título que buscas");
-                        AccionList.buscarNombre(lista, titulo);
+                        posicion = AccionList.buscarNombre(lista, titulo);
+                        sql = "select * from peliculas where idPelicula = " + "'" + posicion + "'" ;
+                        AccionesBD.buscarBD(posicion, lista, sql);
                         break;
                     //Busca todas las coincidencias con el director.
                     case 2:
                         director = Herramientas.pedirString("Dime el director que buscas");
-                        AccionList.buscarDirector(lista, director);
+                        posiciones = AccionList.buscarDirectores(lista,director);
+                        sql = "select * from peliculas where idPelicula = " + "'" + posicion + "'" ;
+                        AccionesBD.buscarBD(posiciones,lista,sql);
                         break;
-                    //Busca todas las coincidencias con el género.
+
                     case 3:
                         genero = Herramientas.pedirString("Dime el género que buscas");
-                        AccionList.buscarGenero(lista, genero);
+                        posiciones = AccionList.buscarGeneros(lista,genero);
+                        sql = "select * from peliculas where idPelicula = " + "'" + posicion + "'" ;
+                        AccionesBD.buscarBD(posiciones,lista,sql);
                         break;
                 }
             } else {

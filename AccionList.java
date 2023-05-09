@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * Clase que recoge los métodos directos que permiten añadir, buscar, modificar y borrar en la lista.
  *
@@ -16,9 +18,9 @@ public class AccionList {
      * @author Adriandela
      */
     public static void añadirPelLista(Galeria lista, String titulo, String director, String genero) {
+        int longitud = lista.longitudLista();
         try {
-            lista.addPelicula(new Pelicula(titulo, director, genero));
-
+          lista.addPelicula(new Pelicula(longitud+1,titulo, director, genero));
         } catch (Exception e) {
             System.out.println("Lo sentimos hemos tenido un error en el programa ~00");
         }
@@ -45,7 +47,7 @@ public class AccionList {
             do {
                 if (Herramientas.convertirAMinus(lista.getCartelera().get(posicion).getNombre()).equals(titulo)) {
                     bucle = true;
-                    System.out.println(lista.getCartelera().get(posicion));
+                    //System.out.println(lista.getCartelera().get(posicion));
                     encontrado = true;
                 } else {
                     bucle = false;
@@ -71,8 +73,8 @@ public class AccionList {
      * @return encontrado: Boolean que es true si hay coincidencias o false si no la hay.
      * @author Adriandela
      */
-    public static boolean buscarGenero(Galeria lista, String genero) {
-        //Creado con for, ya que para un género pueden haber varios registros
+    public static ArrayList<Integer> buscarGeneros(Galeria lista, String genero) {
+        ArrayList<Integer> volcadoLista = new ArrayList<Integer>();
         int longitudLista = lista.longitudLista();
         boolean encontrado = false;
         try {
@@ -80,7 +82,7 @@ public class AccionList {
 
             for (int i = 0; i < longitudLista; i++) {
                 if (Herramientas.convertirAMinus(lista.getCartelera().get(i).getGénero()).equals(genero)) {
-                    System.out.println(lista.getCartelera().get(i));
+                   volcadoLista.add(lista.getCartelera().get(i).getIdPelicula());
                     encontrado = true;
                 }
             }
@@ -90,7 +92,7 @@ public class AccionList {
         } catch (Exception e) {
             System.out.println("Lo sentimos hemos tenido un error en el programa ~20");
         }
-        return encontrado;
+        return volcadoLista;
 
     }
 
@@ -102,8 +104,8 @@ public class AccionList {
      * @return encontrado: Boolean que es true si hay coincidencias o false si no la hay.
      * @author Adriandela
      */
-    public static boolean buscarDirector(Galeria lista, String director) {
-        //Creado con for, ya que para un director pueden haber varios registros
+    public static ArrayList<Integer> buscarDirectores(Galeria lista, String director) {
+        ArrayList<Integer> volcadoLista = new ArrayList<Integer>();
         int longitudLista = lista.longitudLista();
         boolean encontrado = false;
         try {
@@ -111,7 +113,7 @@ public class AccionList {
 
             for (int i = 0; i < longitudLista; i++) {
                 if (Herramientas.convertirAMinus(lista.getCartelera().get(i).getDirector()).equals(director)) {
-                    System.out.println(lista.getCartelera().get(i));
+                    volcadoLista.add(lista.getCartelera().get(i).getIdPelicula());
                     encontrado = true;
                 }
             }
@@ -119,9 +121,9 @@ public class AccionList {
                 System.out.println("Los sentimos, no hemos encontrado la palabra que buscabas");
             }
         } catch (Exception e) {
-            System.out.println("Lo sentimos hemos tenido un error en el programa ~30");
+            System.out.println("Lo sentimos hemos tenido un error en el programa ~20");
         }
-        return encontrado;
+        return volcadoLista;
     }
 
     /**

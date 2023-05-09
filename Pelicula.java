@@ -3,6 +3,7 @@
  */
 public class Pelicula {
 
+    private int idPelicula;
     private String nombre;
 
     private String director;
@@ -12,10 +13,19 @@ public class Pelicula {
     public Pelicula() {
     }
 
-    public Pelicula(String nombre, String director, String género) {
+    public Pelicula(int idPelicula, String nombre, String director, String género) {
+        this.idPelicula = idPelicula;
         this.nombre = nombre;
         this.director = director;
         this.género = género;
+    }
+
+    public int getIdPelicula() {
+        return idPelicula;
+    }
+
+    public void setIdPelicula(int idPelicula) {
+        this.idPelicula = idPelicula;
     }
 
     public String getNombre() {
