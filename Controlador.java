@@ -1,3 +1,4 @@
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -16,14 +17,14 @@ public class Controlador {
     public static void main(String[] args) {
         int eleccion;
         Galeria lista = new Galeria();
-        emparejarListayBD(lista);
+        emparejarListayBD(lista);//Carga los datos de la base de datos en la lista.
         try {
             do {
                 eleccion = eleccionMenu(1, 6, Mensaje.mostrarMenu());
 
                 switch (eleccion) {
                     case 1:
-                        //Añade pelicula al ArrayList
+                        //Añade
                         añadirPeliculaListaYBD(lista);
                         break;
                     case 2:
@@ -84,7 +85,8 @@ public class Controlador {
 
     /**
      * añadirPeliculaYBD es un método estático que nos pregunta tres valores de tipo String y los introduce dentro
-     * de la lista como valores de un nuevo objeto de la clase Película.
+     * de la lista como valores de un nuevo objeto de la clase Película, en paralelo también añade esos datos a la
+     * tabla que hay en la base de datos
      *
      * @param lista Objeto de la clase Galeria que alberga un ArrayList<Pelicula>.
      * @author Adriandela
@@ -113,7 +115,8 @@ public class Controlador {
 
     /**
      * buscarPelicula es un método estático que nos pide un número para la elección de las opciones y una palabra con
-     * la que hacer la busqueda, imprime por pantalla un mensaje con el resultado de la busqueda.
+     * la que hacer la busqueda, busca la posición en la lista para luego pasársela a la sentencia sql e imprimir por
+     * pantalla el resultado de la base de datos
      * Previamente deben haber datos guardados para poder funcionar.
      *
      * @param lista Objeto de la clase Galeria que alberga un ArrayList<Pelicula>.
@@ -125,7 +128,6 @@ public class Controlador {
         String titulo;
         String genero;
         String director;
-
         int posicion = 0;
         ArrayList<Integer> posiciones = new ArrayList<Integer>();
         String sql;
@@ -140,7 +142,7 @@ public class Controlador {
                         titulo = Herramientas.pedirString("Dime el título que buscas");
                         posicion = AccionList.buscarNombre(lista, titulo);
                         sql = "select * from peliculas where idPelicula = " + "'" + posicion + "'";
-                        AccionesBD.buscarBD(posicion, lista, sql);
+                        AccionesBD.buscarBD(posicion, sql);
                         break;
                     //Busca todas las coincidencias con el director.
                     case 2:
@@ -148,7 +150,7 @@ public class Controlador {
                         posiciones = AccionList.buscarDirectores(lista, director);
                         System.out.println(posiciones.toString());
                         sql = "select * from peliculas where idPelicula = " + "'" + posicion + "'";
-                        AccionesBD.buscarBD(posiciones, lista, sql);
+                        AccionesBD.buscarBD(posiciones, sql);
                         break;
 
                     case 3:
@@ -156,7 +158,7 @@ public class Controlador {
                         posiciones = AccionList.buscarGeneros(lista, genero);
                         System.out.println(posiciones.toString());
                         sql = "select * from peliculas where idPelicula = " + "'" + posicion + "'";
-                        AccionesBD.buscarBD(posiciones, lista, sql);
+                        AccionesBD.buscarBD(posiciones, sql);
                         break;
                 }
             } else {
@@ -167,6 +169,12 @@ public class Controlador {
         }
     }
 
+    /**
+     * modificarPosicion es un método estático que modifica una posición en concreto de la base de datos, así como de la
+     * lista que tiene asociada.
+     *
+     * @param lista
+     */
     public static void modificarPosicion(Galeria lista) {
         //Debe de haber algún dato guardado para que realice la acción.
         int eleccion;
@@ -245,7 +253,7 @@ public class Controlador {
 
     /**
      * borrarPosicion es un método estático que encuentra la posición que coincide con el valor de búsqueda y la elimina
-     * de la lista. Previamente deben haber datos guardados para poder funcionar.
+     * de la lista y de la base de datos. Previamente deben haber datos guardados para poder funcionar.
      *
      * @param lista Objeto de la clase Galeria que alberga un ArrayList<Pelicula>.
      * @author Adriandela
@@ -274,29 +282,48 @@ public class Controlador {
         }
     }
 
+    /**
+     * emparejarListayBD es un método, que recoge la tabla de la base de datos, la vuelva en una lista y la ordena para
+     * luego volver a volcarla en la base de datos, de esta forma se ordenan y colocan los datos de forma idéntica.
+     *
+     * @param lista
+     */
     public static void emparejarListayBD(Galeria lista) {
         int longitudLista;
         Galeria listaAux = new Galeria();
         String sql;
+        try {
+            AccionesBD.volcarBDaLista(listaAux);//Coge los registros de la BD
+            longitudLista = listaAux.longitudLista();
+            listaAux.ordenarLista();//Al idPelicula le asigna un 1 para el primer registro y le suma 1 al siguiente registro, ordenándolos
+            sql = "delete from peliculas";//Vacía la bd
+            AccionesBD.borrarBD(sql);
+            for (int i = 1; i <= longitudLista; i++) {
+                sql = "insert into peliculas (idPelicula, Titulo, Director, Genero) values (" + listaAux.getCartelera().get(i - 1).getIdPelicula() + "," + "'" + listaAux.getCartelera().get(i - 1).getNombre() + "'," + "'" + listaAux.getCartelera().get(i - 1).getDirector() + "'," + "'" + listaAux.getCartelera().get(i - 1).getGénero() + "');";
+                AccionesBD.updateBD(lista, sql, i);//Vuelve a introducir la lista ya ordenada
+            }
+            lista.removeALLPelicula();//Borra la lista principal
+            AccionesBD.volcarBDaLista(lista);//La llena con los datos ordenados
+            listaAux.removeALLPelicula();//Vacía la lista aux
+        } catch (Exception e) {
+            e.printStackTrace();
 
-        AccionesBD.volcarBDaLista(listaAux);
-        longitudLista = listaAux.longitudLista();
-        listaAux.ordenarLista();
-        sql = "delete from peliculas";
-        AccionesBD.borrarBD(sql);
-        for (int i = 1; i <= longitudLista; i++) {
-            sql = "insert into peliculas (idPelicula, Titulo, Director, Genero) values (" + listaAux.getCartelera().get(i - 1).getIdPelicula() + "," + "'" + listaAux.getCartelera().get(i - 1).getNombre() + "'," + "'" + listaAux.getCartelera().get(i - 1).getDirector() + "'," + "'" + listaAux.getCartelera().get(i - 1).getGénero() + "');";
-            AccionesBD.updateBD(lista, sql, i);
         }
-        lista.removeALLPelicula();
-        AccionesBD.volcarBDaLista(lista);
-        listaAux.removeALLPelicula();
     }
 
+    /**
+     * mostrarListayBD es un método estático que muestra por pantalla todo el contenido de la base de datos y de la lista
+     *
+     * @param lista
+     */
     public static void mostrarListayBD(Galeria lista) {
-        lista.mostrarArrayList();
-        System.out.println("");
-        AccionesBD.mostrarBD();
-        System.out.println("");
+        try {
+            lista.mostrarArrayList();
+            System.out.println("");
+            AccionesBD.mostrarBD();
+            System.out.println("");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

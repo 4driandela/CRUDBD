@@ -29,7 +29,6 @@ public class Mensaje {
         return texto;
 
     }
-
     /**
      * mostrarMenuBusqueda es un método estático que muestra las opciones disponibles del menú que se abre cuando seleccionamos "Modificar una pelicula".
      *

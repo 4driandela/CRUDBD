@@ -52,6 +52,12 @@ public class Galeria {
             System.out.println("Lo sentimos hemos tenido un error en el programa *10");
         }
     }
+
+    /**
+     * removeALLPelicula es un método que elimina todos los objetos dentro del arrayList
+     *
+     * @author Adriandela
+     */
     public void removeALLPelicula() {
         try {
             cartelera.removeAll(cartelera);
@@ -92,7 +98,15 @@ public class Galeria {
         }
 
     }
-    public void ordenarLista(){
+
+    /**
+     * ordenarLista es un método que enumera del 1 para el primer elemento del arrayList
+     * y aumentando en uno el valor para los siguientes elementos, dirigido para
+     * el atributo idPelicula.
+     *
+     * @author Adriandela
+     */
+    public void ordenarLista() {
         int i = 1;
         for (Pelicula item : cartelera) {
             item.setIdPelicula(i);

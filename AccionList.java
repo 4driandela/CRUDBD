@@ -66,11 +66,11 @@ public class AccionList {
     }
 
     /**
-     * buscarGenero es un método estático que recorre el ArrayList en busca de coincidencias con el String genero.
+     * buscarGeneros es un método estático que recorre el ArrayList en busca de coincidencias con el String género.
      *
      * @param lista  Objeto de la clase Galeria que contiene un ArrayList<Pelicula>.
      * @param genero String que recoge la palabra que se buscará en la lista.
-     * @return encontrado: Boolean que es true si hay coincidencias o false si no la hay.
+     * @return volcadoLista ArrayList<Integer> que guarda las posiciones que han coincidido con el valor de género
      * @author Adriandela
      */
     public static ArrayList<Integer> buscarGeneros(Galeria lista, String genero) {
@@ -97,11 +97,11 @@ public class AccionList {
     }
 
     /**
-     * buscarDirector es un método estático que recorre el ArrayList en busca de coincidencias con el String director.
+     * buscarDirectores es un método estático que recorre el ArrayList en busca de coincidencias con el String director.
      *
      * @param lista    Objeto de la clase Galeria que contiene un ArrayList<Pelicula>.
      * @param director String que recoge la palabra que se buscará en la lista.
-     * @return encontrado: Boolean que es true si hay coincidencias o false si no la hay.
+     * @return volcadoLista ArrayList<Integer> que guarda las posiciones que han coincidido con el valor de director
      * @author Adriandela
      */
     public static ArrayList<Integer> buscarDirectores(Galeria lista, String director) {
@@ -190,7 +190,7 @@ public class AccionList {
      */
     public static void borrarPelicula(Galeria lista, int posicion) {
         try {
-            lista.removePelicula(posicion -1);
+            lista.removePelicula(posicion - 1);
         } catch (Exception e) {
             System.out.println("Lo sentimos hemos tenido un error en el programa ~70");
         }
